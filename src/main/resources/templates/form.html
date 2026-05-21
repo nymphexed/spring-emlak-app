@@ -1,0 +1,88 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Emlak Ekle</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <h1 class="mb-4">Yeni Emlak Ekle</h1>
+
+      <form action="/emlak/kaydet" method="post" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Başlık</label>
+          <input type="text" name="baslik" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Fiyat</label>
+          <input type="number" name="fiyat" step="0.01" class="form-control" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Adres</label>
+          <input type="text" name="adres" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Oda Sayısı</label>
+          <input type="number" name="odaSayisi" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Metrekare</label>
+          <input type="number" name="metrekare" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Bina Yaşı</label>
+          <input type="number" name="binaYasi" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">İl</label>
+          <input type="text" name="il" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">İlçe</label>
+          <input type="text" name="ilce" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Kat</label>
+          <input type="number" name="kat" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Eşyalı mı?</label>
+          <select name="esyali" class="form-select">
+            <option value="true">Evet</option>
+            <option value="false">Hayır</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Isıtma Tipi</label>
+          <input type="text" name="isitmaTipi" class="form-control" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Açıklama</label>
+          <textarea name="aciklama" rows="4" class="form-control"></textarea>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-success">Kaydet</button>
+          <a href="/emlak" class="btn btn-secondary">Geri Dön</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
