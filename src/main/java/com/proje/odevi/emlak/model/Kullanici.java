@@ -1,5 +1,7 @@
 package com.proje.odevi.emlak.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -7,7 +9,8 @@ import jakarta.persistence.*;
 public class Kullanici {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="kullanici_seq", sequenceName="KULLANICI_SEQ", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="kullanici_seq")
     private Long id;
 
     private String ad;
@@ -15,6 +18,13 @@ public class Kullanici {
     private String email;
     private String sifre;
     private String rol;
+        @ManyToMany
+    @JoinTable(
+        name = "FAVORI",
+        joinColumns = @JoinColumn(name = "ALICI_ID"),
+        inverseJoinColumns = @JoinColumn(name = "ILAN_ID")
+    )
+    private List<Emlak> favoriler;
 
     
     public Long getId() {
@@ -53,6 +63,12 @@ public class Kullanici {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+    public List<Emlak> getFavoriler() {
+        return favoriler;
+    }
+    public void setFavoriler(List<Emlak> favoriler) {
+        this.favoriler = favoriler;
     }
   
 

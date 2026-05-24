@@ -44,6 +44,11 @@
           <strong>Açıklama:</strong> <span th:text="${emlak.aciklama}"></span>
         </li>
       </ul>
+      <div sec:authorize="hasRole('ALICI')">
+        <form th:action="@{'/favori/ekle/' + ${ilan.id}}" method="post">
+          <button class="btn btn-outline-danger">Favorilere Ekle ❤️</button>
+        </form>
+      </div>
       <a href="/emlak" class="btn btn-secondary">Listeye Dön</a>
     </div>
   </body>

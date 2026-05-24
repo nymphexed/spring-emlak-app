@@ -1,5 +1,7 @@
 package com.proje.odevi.emlak.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +13,9 @@ public class Emlak {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="emlak_seq")
     @Column(name = "ID")
     private Long id;
+
+    @ManyToMany(mappedBy = "favoriler")
+    private List<Kullanici> favoriAlanlar;
 
     @Column(name = "ADRES")
     private String adres;
@@ -168,5 +173,11 @@ public class Emlak {
     }
     public void setKullanici(Kullanici kullanici) {
         this.kullanici = kullanici;
+    }
+    public List<Kullanici> getFavoriAlanlar() {
+        return favoriAlanlar;
+    }
+    public void setFavoriAlanlar(List<Kullanici> favoriAlanlar) {
+        this.favoriAlanlar = favoriAlanlar;
     }
 }

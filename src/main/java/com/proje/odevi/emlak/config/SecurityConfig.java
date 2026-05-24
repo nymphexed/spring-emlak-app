@@ -20,10 +20,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/emlak/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                .requestMatchers("/login").permitAll()
+                .requestMatchers("/register","/login").permitAll()
 
                 .requestMatchers("/satici/**").hasRole("SATICI")
                 .requestMatchers("/alici/**").hasRole("ALICI")
+                .requestMatchers("/favori/**").hasRole("ALICI")
 
                 .anyRequest().authenticated()
             )
@@ -34,7 +35,9 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?cikis")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             );
 
