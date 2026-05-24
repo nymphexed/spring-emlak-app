@@ -28,6 +28,18 @@ public class EmlakService {
     }
 
     public Emlak getir(Long id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Emlak bulunamadı"));
+    }
+
+    public List<Emlak> findBySaticiId(Long id) {
+        return repo.findByKullaniciId(id);
+    }
+
+    
+    public List<Emlak> search(String q) {
+        return repo.findByBaslikContainingIgnoreCaseOrAciklamaContainingIgnoreCaseOrAdresContainingIgnoreCase(
+                q, q, q
+        );
     }
 }

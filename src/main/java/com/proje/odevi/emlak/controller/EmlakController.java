@@ -2,6 +2,9 @@ package com.proje.odevi.emlak.controller;
 
 import com.proje.odevi.emlak.model.Emlak;
 import com.proje.odevi.emlak.service.EmlakService;
+import com.proje.odevi.emlak.service.IlService;
+import com.proje.odevi.emlak.service.KategoriService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,32 +14,48 @@ import org.springframework.web.bind.annotation.*;
 public class EmlakController {
 
     private final EmlakService service;
+    private final IlService ilService;
+    private final KategoriService kategoriService;
 
-    public EmlakController(EmlakService service) {
+    public EmlakController(EmlakService service, IlService ilService, KategoriService kategoriService) {
         this.service = service;
+        this.ilService = ilService;
+        this.kategoriService = kategoriService;
+    }
+
+    @GetMapping("/")
+    public String anasayfa() {
+        return "index";
     }
 
     @GetMapping
-    public String liste(Model model) {
-        model.addAttribute("liste", service.listele());
+    public String liste(Model model, @RequestParam(required = false) String q) {
+        if (q != null && !q.isEmpty()) {
+            model.addAttribute("liste", service.search(q));
+        } else {
+            model.addAttribute("liste", service.listele());
+        }
         return "liste";
     }
 
-    @GetMapping("/yeni")
-    public String yeniForm(Model model) {
+    @GetMapping("/detay/{id}")
+    public String detay(@PathVariable Long id, Model model) {
+        model.addAttribute("emlak", service.getir(id));
+        return "detay";
+    }
+
+    // ⭐ EMLAK EKLEME FORMU
+    @GetMapping("/ekle")
+    public String ekleForm(Model model) {
+
         model.addAttribute("emlak", new Emlak());
-        return "form";
-    }
 
-    @PostMapping("/kaydet")
-    public String kaydet(Emlak emlak) {
-        service.kaydet(emlak);
-        return "redirect:/emlak";
-    }
+        // İl dropdown
+        model.addAttribute("iller", ilService.listele());
 
-    @GetMapping("/sil/{id}")
-    public String sil(@PathVariable Long id) {
-        service.sil(id);
-        return "redirect:/emlak";
+        // ⭐ Kategori dropdown
+        model.addAttribute("kategoriler", kategoriService.findAll());
+
+        return "emlak-ekle"; 
     }
 }
