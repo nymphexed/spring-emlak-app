@@ -11,6 +11,8 @@
   </head>
 
   <body class="bg-light">
+    <div th:replace="~{navbar :: body}"></div>
+
     <div class="container mt-4">
       <h2 class="mb-4">İlanlarım</h2>
 
@@ -32,6 +34,14 @@
         </thead>
 
         <tbody>
+          <!-- BOŞ LİSTE MESAJI BURADA OLMALI -->
+          <tr th:if="${ilanlar == null or #lists.isEmpty(ilanlar)}">
+            <td colspan="5" class="text-center text-muted fs-5">
+              Henüz bir ilan eklemediniz.
+            </td>
+          </tr>
+
+          <!-- İLANLAR -->
           <tr th:each="e : ${ilanlar}">
             <td th:text="${e.id}"></td>
             <td th:text="${e.baslik}"></td>

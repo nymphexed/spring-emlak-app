@@ -47,22 +47,20 @@ public class Emlak {
     @Column(name = "ACIKLAMA")
     private String aciklama;
 
-    // 🔥 İL ilişkisi
+
     @ManyToOne
     @JoinColumn(name = "IL_ID")
     private Il il;
 
-    // 🔥 İLÇE ilişkisi
     @ManyToOne
     @JoinColumn(name = "ILCE_ID")
     private Ilce ilce;
 
-    // 🔥 Kategori ilişkisi
     @ManyToOne
     @JoinColumn(name = "KATEGORI_ID")
     private Kategori kategori;
 
-    // 🔥 Kullanıcı ilişkisi
+
     @ManyToOne
     @JoinColumn(name = "KULLANICI_ID")
     private Kullanici kullanici;

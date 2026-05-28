@@ -17,59 +17,84 @@ public class Kullanici {
     private String soyad;
     private String email;
     private String sifre;
-    private String rol;
-        @ManyToMany
+
+    // ✔ Yeni sistem: Kullanıcı satıcı mı?
+    //   false → sadece alıcı
+    //   true  → hem alıcı hem satıcı
+    @Column(name = "IS_SELLER")
+    private boolean isSeller = false;
+
+
+    @ManyToMany
     @JoinTable(
         name = "FAVORI",
-        joinColumns = @JoinColumn(name = "ALICI_ID"),
-        inverseJoinColumns = @JoinColumn(name = "ILAN_ID")
+        joinColumns = @JoinColumn(name = "KULLANICI_ID"),
+        inverseJoinColumns = @JoinColumn(name = "EMLAK_ID")
     )
     private List<Emlak> favoriler;
 
-    
+    @OneToOne(mappedBy = "kullanici",
+          fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL,
+          orphanRemoval = true)
+    private EmlakIsletmesi isletme;
+
+
+    // GETTER - SETTER
+
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getAd() {
         return ad;
     }
     public void setAd(String ad) {
         this.ad = ad;
     }
+
     public String getSoyad() {
         return soyad;
     }
     public void setSoyad(String soyad) {
         this.soyad = soyad;
     }
+
     public String getEmail() {
         return email;
     }
     public void setEmail(String email) {
         this.email = email;
     }
+
     public String getSifre() {
         return sifre;
     }
     public void setSifre(String sifre) {
         this.sifre = sifre;
     }
-    public String getRol() {
-        return rol;
-    }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public boolean isSeller() {
+        return isSeller;
     }
+    public void setSeller(boolean seller) {
+        this.isSeller = seller;
+    }
+    
     public List<Emlak> getFavoriler() {
         return favoriler;
     }
     public void setFavoriler(List<Emlak> favoriler) {
         this.favoriler = favoriler;
     }
-  
 
+    public EmlakIsletmesi getIsletme() {
+        return isletme;
+    }
+    public void setIsletme(EmlakIsletmesi isletme) {
+        this.isletme = isletme;
+    }
 }

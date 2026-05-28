@@ -1,5 +1,7 @@
 package com.proje.odevi.emlak.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 
@@ -13,6 +15,10 @@ public class Il {
 
     private String ad;
 
+    @OneToMany(mappedBy = "il", fetch = FetchType.LAZY)
+    private List<Ilce> ilceler;
+
+    // Getter – Setter
     public Long getId() {
         return id;
     }
@@ -29,5 +35,10 @@ public class Il {
         this.ad = ad;
     }
 
-    // Getter – Setter
+    public List<Ilce> getIlceler() {
+        return ilceler;
+    }
+
+
+    
 }

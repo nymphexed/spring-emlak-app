@@ -1,6 +1,8 @@
 package com.proje.odevi.emlak.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class Ilce {
     private String ad;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "IL_ID")
     private Il il;
 

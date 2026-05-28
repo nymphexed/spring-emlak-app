@@ -1,6 +1,5 @@
 package com.proje.odevi.emlak.service;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.proje.odevi.emlak.model.Kullanici;
 import com.proje.odevi.emlak.repository.KullaniciRepository;
+import com.proje.odevi.emlak.security.CustomUserDetails;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,10 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Kullanici k = repo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı"));
 
-        return User.builder()
-                .username(k.getEmail())
-                .password(k.getSifre())
-                .roles(k.getRol()) 
-                .build();
+        return new CustomUserDetails(k);
     }
 }

@@ -1,52 +1,64 @@
 package com.proje.odevi.emlak.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.proje.odevi.emlak.service.CustomUserDetailsService;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
+        auth.setUserDetailsService(userDetailsService);
+        auth.setPasswordEncoder(passwordEncoder());
+        return auth;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/emlak/**").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                .requestMatchers("/register","/login").permitAll()
+        .authenticationProvider(authProvider())
+        .authorizeHttpRequests(auth -> auth
+            // ✔ Static dosyalar
+            .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**").permitAll()
 
-                .requestMatchers("/satici/**").hasRole("SATICI")
-                .requestMatchers("/alici/**").hasRole("ALICI")
-                .requestMatchers("/favori/**").hasRole("ALICI")
+            // ✔ Herkesin erişebileceği sayfalar
+            .requestMatchers("/", "/login", "/register").permitAll()
 
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .permitAll()
-            );
+            // ✔ Satıcıya özel işlemler
+            .requestMatchers("/satici/**").hasRole("SATICI")
+            .requestMatchers("/profil/isletme-sil").hasRole("SATICI")
+
+            // ✔ Diğer tüm istekler → giriş gerektirir
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .defaultSuccessUrl("/", true)
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/")
+            .permitAll()
+        );
 
         return http.build();
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
-

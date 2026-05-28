@@ -9,7 +9,7 @@
   >
     <!-- SOL: Logo -->
     <a class="navbar-brand" href="/">
-      <img src="/img/logo.png" class="logo" alt="Logo" />
+      <img th:src="@{/img/logo.png}" class="logo" alt="Logo" />
     </a>
 
     <!-- ORTA: Menü -->
@@ -18,21 +18,47 @@
         Tüm İlanlar
       </a>
 
+      <!-- Satıcı ise: İlanlarım -->
       <div sec:authorize="hasRole('SATICI')">
         <a href="/satici/ilanlarim" class="btn btn-sm btn-outline-dark fs-5">
           İlanlarım
+        </a>
+      </div>
+
+      <!-- Satıcı ise: Profilim -->
+      <div sec:authorize="isAuthenticated()">
+        <a href="/profil" class="btn btn-sm btn-outline-dark fs-5">
+          Profilim
+        </a>
+      </div>
+      <div sec:authorize="isAnonymous()">
+        <a href="/login" class="btn btn-sm btn-outline-dark fs-5">İlan Ver</a>
+      </div>
+      <!-- Satıcı değilse: Satıcı Ol -->
+      <div sec:authorize="isAuthenticated() and !principal.kullanici.seller">
+        <a href="/profil" class="btn btn-sm btn-outline-dark fs-5">
+          İlan Ver
+        </a>
+      </div>
+
+      <!-- Satıcı ise: İlan Ekle -->
+      <div sec:authorize="hasRole('SATICI')">
+        <a href="/satici/yeni" class="btn btn-sm btn-outline-dark fs-5">
+          İlan Ekle
         </a>
       </div>
     </div>
 
     <!-- SAĞ: Login / Logout -->
     <div class="d-flex align-items-end gap-2">
+      <!-- Giriş yapmış kullanıcı -->
       <div
         sec:authorize="isAuthenticated()"
         class="d-flex align-items-center gap-2"
       >
         Hoşgeldin,
         <span th:text="${adSoyad}"></span>
+
         <form th:action="@{/logout}" method="post">
           <input
             type="hidden"
@@ -43,6 +69,7 @@
         </form>
       </div>
 
+      <!-- Giriş yapmamış kullanıcı -->
       <div sec:authorize="isAnonymous()">
         <a href="/login" class="btn btn-sm btn-primary">Giriş Yap</a>
       </div>
@@ -56,6 +83,9 @@
       height: auto;
       object-fit: contain;
       display: block;
+    }
+    * {
+      transition: 0.3s ease-in-out !important;
     }
   </style>
 </nav>

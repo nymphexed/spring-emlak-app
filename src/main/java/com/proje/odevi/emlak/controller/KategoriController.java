@@ -2,6 +2,9 @@ package com.proje.odevi.emlak.controller;
 
 import com.proje.odevi.emlak.model.Kategori;
 import com.proje.odevi.emlak.service.KategoriService;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,4 +36,11 @@ public class KategoriController {
         kategoriService.save(kategori);
         return "redirect:/kategori";
     }
+
+    @GetMapping("/getAll")
+    @ResponseBody
+    public List<Kategori> getAll() {
+        return kategoriService.findAll();
+    }
+
 }

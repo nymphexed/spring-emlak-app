@@ -23,7 +23,9 @@ public class SaticiController {
     private final KullaniciRepository kullaniciRepository;
     private final KategoriService kategoriService;
 
-    public SaticiController(EmlakService emlakService, IlService ilService, KullaniciRepository kullaniciRepository, KategoriService kategoriService) {
+    public SaticiController(EmlakService emlakService, IlService ilService, 
+                            KullaniciRepository kullaniciRepository, 
+                            KategoriService kategoriService) {
         this.emlakService = emlakService;
         this.ilService = ilService;
         this.kullaniciRepository = kullaniciRepository;
@@ -34,35 +36,52 @@ public class SaticiController {
     @GetMapping("/ilanlarim")
     public String ilanlarim(Model model, Principal principal) {
 
-        String email = principal.getName();
-        Kullanici satici = kullaniciRepository.findByEmail(email).orElseThrow();
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
+
+        // ✔ Yeni sistem: sadece isSeller kontrolü
+        if (!satici.isSeller()) {
+            return "redirect:/access-denied";
+        }
 
         List<Emlak> ilanlar = emlakService.findBySaticiId(satici.getId());
-
         model.addAttribute("ilanlar", ilanlar);
-        return "ilanlarim"; // templates/ilanlarim.html
+
+        return "ilanlarim";
     }
 
     // YENİ İLAN FORMU
     @GetMapping("/yeni")
-    public String yeniForm(Model model) {
+    public String yeniForm(Model model, Principal principal) {
+
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
+
+        if (!satici.isSeller()) {
+            return "redirect:/access-denied";
+        }
+
         model.addAttribute("emlak", new Emlak());
         model.addAttribute("iller", ilService.findAll());
         model.addAttribute("kategoriler", kategoriService.findAll());
-        return "form"; // templates/form.html
+
+        return "form";
     }
 
     // İLAN KAYDETME
     @PostMapping("/kaydet")
     public String kaydet(Emlak emlak, Principal principal) {
 
-        String email = principal.getName();
-        Kullanici satici = kullaniciRepository.findByEmail(email).orElseThrow();
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
 
-        // ilanı giriş yapan satıcıya bağla
+        if (!satici.isSeller()) {
+            return "redirect:/access-denied";
+        }
+
         emlak.setKullanici(satici);
-
         emlakService.kaydet(emlak);
+
         return "redirect:/satici/ilanlarim";
     }
 
@@ -70,16 +89,24 @@ public class SaticiController {
     @GetMapping("/duzenle/{id}")
     public String duzenleForm(@PathVariable Long id, Principal principal, Model model) {
 
-        Emlak emlak = emlakService.getir(id);
-        String email = principal.getName();
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
 
-        // Başkasının ilanıysa → ilanlarım sayfasına dön
-        if (!emlak.getKullanici().getEmail().equals(email)) {
+        if (!satici.isSeller()) {
+            return "redirect:/access-denied";
+        }
+
+        Emlak emlak = emlakService.getir(id);
+
+        if (!emlak.getKullanici().getId().equals(satici.getId())) {
             return "redirect:/satici/ilanlarim";
         }
 
         model.addAttribute("emlak", emlak);
         model.addAttribute("iller", ilService.findAll());
+        model.addAttribute("ilçeler", ilService.findById(emlak.getIl().getId()).getIlceler());
+        model.addAttribute("kategoriler", kategoriService.findAll());
+
         return "form";
     }
 
@@ -87,10 +114,16 @@ public class SaticiController {
     @GetMapping("/sil/{id}")
     public String sil(@PathVariable Long id, Principal principal) {
 
-        Emlak emlak = emlakService.getir(id);
-        String email = principal.getName();
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
 
-        if (!emlak.getKullanici().getEmail().equals(email)) {
+        if (!satici.isSeller()) {
+            return "redirect:/access-denied";
+        }
+
+        Emlak emlak = emlakService.getir(id);
+
+        if (!emlak.getKullanici().getId().equals(satici.getId())) {
             return "redirect:/satici/ilanlarim";
         }
 

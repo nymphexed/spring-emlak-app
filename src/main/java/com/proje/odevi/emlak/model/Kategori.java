@@ -1,5 +1,8 @@
 package com.proje.odevi.emlak.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -10,8 +13,14 @@ public class Kategori {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String ad;
+
+    @OneToMany(mappedBy = "kategori")
+    @JsonIgnore
+    private List<Emlak> emlaklar;
+
+
+    
 
     public Long getId() {
         return id;

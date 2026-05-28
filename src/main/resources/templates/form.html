@@ -28,7 +28,6 @@
         method="post"
         class="row g-3"
       >
-        <!-- Düzenleme için ID -->
         <input type="hidden" th:field="*{id}" />
 
         <div class="col-md-6">
@@ -125,6 +124,7 @@
           <label class="form-label">Isıtma Tipi</label>
           <input type="text" th:field="*{isitmaTipi}" class="form-control" />
         </div>
+
         <div class="col-md-6">
           <label class="form-label">Kategori</label>
           <select
@@ -155,6 +155,8 @@
           <button type="submit" class="btn btn-success">Kaydet</button>
           <a href="/satici/ilanlarim" class="btn btn-secondary">Geri Dön</a>
         </div>
+        <!-- Düzenleme ekranında seçili ilçeyi yakalamak için -->
+        <input type="hidden" id="selectedIlceId" th:value="*{ilce.id}" />
       </form>
     </div>
 
@@ -163,27 +165,43 @@
         .getElementById("ilSelect")
         .addEventListener("change", function () {
           const ilId = this.value;
+          const ilceSelect = document.getElementById("ilceSelect");
 
           if (!ilId) {
-            document.getElementById("ilceSelect").innerHTML =
-              '<option value="">Önce il seçin</option>';
+            ilceSelect.innerHTML = '<option value="">Önce il seçin</option>';
             return;
           }
 
           fetch("/ilce/getByIl/" + ilId)
             .then((response) => response.json())
             .then((data) => {
-              const ilceSelect = document.getElementById("ilceSelect");
               ilceSelect.innerHTML = "";
+              const selectedIlceId =
+                document.getElementById("selectedIlceId").value;
 
               data.forEach((ilce) => {
                 const option = document.createElement("option");
                 option.value = ilce.id;
                 option.textContent = ilce.ad;
+
+                if (ilce.id == selectedIlceId) {
+                  option.selected = true;
+                }
+
                 ilceSelect.appendChild(option);
               });
             });
         });
+
+      // Sayfa açıldığında düzenleme modundaysa ilçeleri otomatik yükle
+      window.addEventListener("load", function () {
+        const ilId = document.getElementById("ilSelect").value;
+        if (ilId) {
+          document
+            .getElementById("ilSelect")
+            .dispatchEvent(new Event("change"));
+        }
+      });
     </script>
   </body>
 </html>

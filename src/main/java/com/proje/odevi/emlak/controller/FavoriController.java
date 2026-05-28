@@ -2,7 +2,6 @@ package com.proje.odevi.emlak.controller;
 
 import java.security.Principal;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +26,10 @@ public class FavoriController {
     public String favoriEkle(@PathVariable Long ilanId, Principal principal) {
 
         Kullanici kullanici = kullaniciRepository.findByEmail(principal.getName())
-        .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        // Sadece ALICI favori ekleyebilir
-        if (!kullanici.getRol().equals("ALICI")) {
-            return "redirect:/access-denied";
-        }
+        // ✔ Yeni sistem: Her kullanıcı alıcıdır → favori ekleyebilir
+        // Satıcı olsa bile alıcıdır, o yüzden engel yok
 
         favoriService.favoriyeEkle(kullanici.getId(), ilanId);
 
