@@ -1,5 +1,6 @@
 package com.proje.odevi.emlak.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +19,9 @@ public class EmlakIsletmesi {
     @SequenceGenerator(name = "emlak_isletme_seq", sequenceName = "EMLAK.EMLAK_ISLETME_SEQ", allocationSize = 1)
     private Long id;
 
+    @Column(name = "ISLETME_ADI")
     private String isletmeAdi;
+    
     private String yetkili;
     private String adres;
     private String telefon;
@@ -40,7 +43,7 @@ public class EmlakIsletmesi {
         return isletmeAdi;
     }
 
-    public void setIsletmeAdi(String isletme_adi) {
+    public void setIsletmeAdi(String isletmeAdi) {
         this.isletmeAdi = isletmeAdi;
     }
 

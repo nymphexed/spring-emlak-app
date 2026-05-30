@@ -2,15 +2,17 @@ package com.proje.odevi.emlak.controller;
 
 import com.proje.odevi.emlak.model.Emlak;
 import com.proje.odevi.emlak.model.Kullanici;
-import com.proje.odevi.emlak.repository.KullaniciRepository;
 import com.proje.odevi.emlak.service.EmlakService;
 import com.proje.odevi.emlak.service.IlService;
 import com.proje.odevi.emlak.service.KategoriService;
+import com.proje.odevi.emlak.repository.KullaniciRepository;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -23,43 +25,37 @@ public class SaticiController {
     private final KullaniciRepository kullaniciRepository;
     private final KategoriService kategoriService;
 
-    public SaticiController(EmlakService emlakService, IlService ilService, 
-                            KullaniciRepository kullaniciRepository, 
-                            KategoriService kategoriService) {
+    public SaticiController(EmlakService emlakService,
+            IlService ilService,
+            KullaniciRepository kullaniciRepository,
+            KategoriService kategoriService) {
         this.emlakService = emlakService;
         this.ilService = ilService;
         this.kullaniciRepository = kullaniciRepository;
         this.kategoriService = kategoriService;
     }
 
-    // SATICININ KENDİ İLANLARI
     @GetMapping("/ilanlarim")
     public String ilanlarim(Model model, Principal principal) {
 
         Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        // ✔ Yeni sistem: sadece isSeller kontrolü
-        if (!satici.isSeller()) {
+        if (!satici.isSeller())
             return "redirect:/access-denied";
-        }
 
-        List<Emlak> ilanlar = emlakService.findBySaticiId(satici.getId());
-        model.addAttribute("ilanlar", ilanlar);
-
+        model.addAttribute("ilanlar", emlakService.findBySaticiId(satici.getId()));
         return "ilanlarim";
     }
 
-    // YENİ İLAN FORMU
     @GetMapping("/yeni")
     public String yeniForm(Model model, Principal principal) {
 
         Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        if (!satici.isSeller()) {
+        if (!satici.isSeller())
             return "redirect:/access-denied";
-        }
 
         model.addAttribute("emlak", new Emlak());
         model.addAttribute("iller", ilService.findAll());
@@ -68,39 +64,35 @@ public class SaticiController {
         return "form";
     }
 
-    // İLAN KAYDETME
     @PostMapping("/kaydet")
-    public String kaydet(Emlak emlak, Principal principal) {
+    public String kaydet(Emlak emlak,
+            @RequestParam("dosyalar") List<MultipartFile> dosyalar,
+            Principal principal) throws IOException {
 
         Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        if (!satici.isSeller()) {
+        if (!satici.isSeller())
             return "redirect:/access-denied";
-        }
 
-        emlak.setKullanici(satici);
-        emlakService.kaydet(emlak);
+        emlakService.kaydetIlan(emlak, dosyalar, satici);
 
         return "redirect:/satici/ilanlarim";
     }
 
-    // DÜZENLEME FORMU (sadece kendi ilanı)
     @GetMapping("/duzenle/{id}")
     public String duzenleForm(@PathVariable Long id, Principal principal, Model model) {
 
         Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        if (!satici.isSeller()) {
+        if (!satici.isSeller())
             return "redirect:/access-denied";
-        }
 
         Emlak emlak = emlakService.getir(id);
 
-        if (!emlak.getKullanici().getId().equals(satici.getId())) {
+        if (!emlak.getKullanici().getId().equals(satici.getId()))
             return "redirect:/satici/ilanlarim";
-        }
 
         model.addAttribute("emlak", emlak);
         model.addAttribute("iller", ilService.findAll());
@@ -110,24 +102,24 @@ public class SaticiController {
         return "form";
     }
 
-    // SİLME (sadece kendi ilanı)
+    @DeleteMapping("/foto-sil/{fotoId}")
+    @ResponseBody
+    public String fotoSil(@PathVariable Long fotoId, Principal principal) {
+
+        Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
+                .orElseThrow();
+
+        return emlakService.fotoSilYetkili(fotoId, satici);
+    }
+
     @GetMapping("/sil/{id}")
     public String sil(@PathVariable Long id, Principal principal) {
 
         Kullanici satici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        if (!satici.isSeller()) {
-            return "redirect:/access-denied";
-        }
+        emlakService.silYetkili(id, satici);
 
-        Emlak emlak = emlakService.getir(id);
-
-        if (!emlak.getKullanici().getId().equals(satici.getId())) {
-            return "redirect:/satici/ilanlarim";
-        }
-
-        emlakService.sil(id);
         return "redirect:/satici/ilanlarim";
     }
 }

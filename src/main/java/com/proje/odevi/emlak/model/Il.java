@@ -2,8 +2,9 @@ package com.proje.odevi.emlak.model;
 
 import java.util.List;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "IL")
@@ -16,6 +17,7 @@ public class Il {
     private String ad;
 
     @OneToMany(mappedBy = "il", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Ilce> ilceler;
 
     // Getter – Setter
@@ -39,6 +41,4 @@ public class Il {
         return ilceler;
     }
 
-
-    
 }

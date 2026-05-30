@@ -18,9 +18,8 @@ public class Kullanici {
     private String email;
     private String sifre;
 
-    // ✔ Yeni sistem: Kullanıcı satıcı mı?
-    //   false → sadece alıcı
-    //   true  → hem alıcı hem satıcı
+    //  Yeni sistem: Kullanıcı satıcı mı? false → sadece alıcı   true  → hem alıcı hem satıcı
+ 
     @Column(name = "IS_SELLER")
     private boolean isSeller = false;
 
@@ -97,4 +96,12 @@ public class Kullanici {
     public void setIsletme(EmlakIsletmesi isletme) {
         this.isletme = isletme;
     }
+
+    public Kullanici() {
+    // Parametresiz constructor, Spring MVC formları için gerekli
+    }
+    public Kullanici(Long id) {
+        this.id = id;
+    }
+
 }

@@ -19,7 +19,6 @@ import com.proje.odevi.emlak.repository.EmlakIsletmesiRepository;
 import com.proje.odevi.emlak.repository.KullaniciRepository;
 import com.proje.odevi.emlak.security.CustomUserDetails;
 
-
 @Controller
 @RequestMapping("/profil")
 public class ProfilController {
@@ -28,12 +27,10 @@ public class ProfilController {
     private final EmlakIsletmesiRepository isletmeRepository;
 
     public ProfilController(KullaniciRepository kullaniciRepository,
-                            EmlakIsletmesiRepository isletmeRepository) {
+            EmlakIsletmesiRepository isletmeRepository) {
         this.kullaniciRepository = kullaniciRepository;
         this.isletmeRepository = isletmeRepository;
     }
-
-
 
     @GetMapping
     public String profil(Model model, Principal principal) {
@@ -48,7 +45,6 @@ public class ProfilController {
 
         model.addAttribute("kullanici", k);
 
-
         System.err.println("DEBUG isSeller = " + k.isSeller());
         System.err.println("DEBUG isletme = " + k.getIsletme());
         System.err.println("DEBUG koşul = " + (k.isSeller() && k.getIsletme() == null));
@@ -58,11 +54,11 @@ public class ProfilController {
 
     @PostMapping("/isletme-ekle")
     public String isletmeEkle(Principal principal,
-                              @RequestParam String isletmeAdi,
-                              @RequestParam String yetkili,
-                              @RequestParam String adres,
-                              @RequestParam String telefon,
-                              @RequestParam(required = false) String fax) {
+            @RequestParam String isletmeAdi,
+            @RequestParam String yetkili,
+            @RequestParam String adres,
+            @RequestParam String telefon,
+            @RequestParam(required = false) String fax) {
 
         if (principal == null) {
             return "redirect:/login";
@@ -104,24 +100,23 @@ public class ProfilController {
 
             // ✔ İşletmeyi sil
             isletmeRepository.delete(k.getIsletme());
-         
+
             k.setIsletme(null);
             kullaniciRepository.save(k);
             CustomUserDetails yeniUserDetails = new CustomUserDetails(k);
 
             Authentication yeniAuth = new UsernamePasswordAuthenticationToken(
-                yeniUserDetails,
-                null,
-                yeniUserDetails.getAuthorities()
-            );
+                    yeniUserDetails,
+                    null,
+                    yeniUserDetails.getAuthorities());
             yeniUserDetails.setKullanici(k);
 
             SecurityContextHolder.getContext().setAuthentication(yeniAuth);
         }
-        
 
         return "redirect:/profil";
     }
+
     @PostMapping("/satici-ol")
     public String saticiOl(Authentication authentication, RedirectAttributes redirectAttributes) {
 
@@ -134,24 +129,21 @@ public class ProfilController {
 
         // 2) Güncellenmiş kullanıcıyı tekrar yükle
         CustomUserDetails yeniUserDetails = new CustomUserDetails(kullanici);
-        
 
         // 3) Yeni Authentication oluştur
-        UsernamePasswordAuthenticationToken yeniAuth =
-                new UsernamePasswordAuthenticationToken(
-                        yeniUserDetails,
-                        authentication.getCredentials(),
-                        yeniUserDetails.getAuthorities()
-                );
+        UsernamePasswordAuthenticationToken yeniAuth = new UsernamePasswordAuthenticationToken(
+                yeniUserDetails,
+                authentication.getCredentials(),
+                yeniUserDetails.getAuthorities());
 
         // 4) SecurityContext’e koy
         SecurityContextHolder.getContext().setAuthentication(yeniAuth);
-            
-        redirectAttributes.addFlashAttribute("successMessage", "Tebrikler! Artık satıcısın. Eğer bir emlak işletmen varsa şimdi ekleyebilirsin.");
-        redirectAttributes.addFlashAttribute("confetti", true);       
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Tebrikler! Artık satıcısın. Eğer bir emlak işletmen varsa şimdi ekleyebilirsin.");
+        redirectAttributes.addFlashAttribute("confetti", true);
         return "redirect:/profil";
     }
-
 
     @PostMapping("/satici-kaldir")
     public String saticiKaldir(Authentication authentication, RedirectAttributes redirectAttributes) {
@@ -161,9 +153,9 @@ public class ProfilController {
 
         // 1) Eğer işletme varsa sil
         if (kullanici.getIsletme() != null) {
-        isletmeRepository.delete(kullanici.getIsletme());
-        kullanici.setIsletme(null);
-}
+            isletmeRepository.delete(kullanici.getIsletme());
+            kullanici.setIsletme(null);
+        }
 
         // 2) Satıcı rolünü kaldır
         kullanici.setSeller(false);
@@ -175,8 +167,7 @@ public class ProfilController {
         Authentication yeniAuth = new UsernamePasswordAuthenticationToken(
                 yeniUserDetails,
                 authentication.getCredentials(),
-                yeniUserDetails.getAuthorities()
-        );
+                yeniUserDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(yeniAuth);
 
@@ -185,6 +176,6 @@ public class ProfilController {
                 "Satıcı profilin kaldırıldı. Artık normal kullanıcı olarak devam ediyorsun.");
 
         return "redirect:/profil";
-}
+    }
 
 }

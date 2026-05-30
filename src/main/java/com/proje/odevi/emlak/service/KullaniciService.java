@@ -30,4 +30,8 @@ public class KullaniciService {
     public void delete(Long id) {
         kullaniciRepository.deleteById(id);
     }
+    
+    public Kullanici findByEmail(String email) {
+        return kullaniciRepository.findByEmail(email).orElse(null);
+    }
 }

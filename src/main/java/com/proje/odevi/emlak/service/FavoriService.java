@@ -6,39 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.proje.odevi.emlak.model.Emlak;
+import com.proje.odevi.emlak.model.Favori;
 import com.proje.odevi.emlak.model.Kullanici;
-import com.proje.odevi.emlak.repository.EmlakRepository;
-import com.proje.odevi.emlak.repository.KullaniciRepository;
+import com.proje.odevi.emlak.repository.FavoriRepository;
+
 
 @Service
 public class FavoriService {
 
     @Autowired
-    private KullaniciRepository kullaniciRepository;
+    private FavoriRepository favoriRepository;
+  
 
-    @Autowired
-    private EmlakRepository emlakRepository;
+    public boolean isFavori(Long kullaniciId, Long ilanId) {
+        return favoriRepository.existsByKullanici_IdAndEmlak_Id(kullaniciId, ilanId);
+    }
 
-    public void favoriyeEkle(Long aliciId, Long ilanId) {
+    public void favoriyeEkle(Long kullaniciId, Long ilanId) {
+        Favori favori = new Favori();
+        favori.setKullanici(new Kullanici(kullaniciId));
+        favori.setEmlak(new Emlak(ilanId));
+        favoriRepository.save(favori);
+    }
 
-        Kullanici alici = kullaniciRepository.findById(aliciId)
-                .orElseThrow(() -> new RuntimeException("Alıcı bulunamadı"));
-
-        Emlak ilan = emlakRepository.findById(ilanId)
-                .orElseThrow(() -> new RuntimeException("İlan bulunamadı"));
-
-        
-        if (alici.getFavoriler() == null) {
-            alici.setFavoriler(new ArrayList<>());
-        }
-
-        // Aynı ilanı iki kez eklemeyi engelle
-        boolean zatenFavoride = alici.getFavoriler().stream()
-                .anyMatch(f -> f.getId().equals(ilanId));
-
-        if (!zatenFavoride) {
-            alici.getFavoriler().add(ilan);
-            kullaniciRepository.save(alici);
-        }
+    public void favoridenCikar(Long kullaniciId, Long ilanId) {
+        favoriRepository.deleteByKullanici_IdAndEmlak_Id(kullaniciId, ilanId);
     }
 }

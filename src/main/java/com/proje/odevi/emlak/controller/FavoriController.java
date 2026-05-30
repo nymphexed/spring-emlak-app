@@ -2,11 +2,8 @@ package com.proje.odevi.emlak.controller;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.proje.odevi.emlak.model.Kullanici;
 import com.proje.odevi.emlak.repository.KullaniciRepository;
@@ -16,23 +13,30 @@ import com.proje.odevi.emlak.service.FavoriService;
 @RequestMapping("/favori")
 public class FavoriController {
 
-    @Autowired
-    private FavoriService favoriService;
+    private final FavoriService favoriService;
+    private final KullaniciRepository kullaniciRepository;
 
-    @Autowired
-    private KullaniciRepository kullaniciRepository;
+    public FavoriController(FavoriService favoriService, KullaniciRepository kullaniciRepository) {
+        this.favoriService = favoriService;
+        this.kullaniciRepository = kullaniciRepository;
+    }
 
-    @PostMapping("/ekle/{ilanId}")
-    public String favoriEkle(@PathVariable Long ilanId, Principal principal) {
+    @PostMapping("/toggle/{ilanId}")
+    public String toggleFavori(@PathVariable Long ilanId, Principal principal) {
 
         Kullanici kullanici = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        // ✔ Yeni sistem: Her kullanıcı alıcıdır → favori ekleyebilir
-        // Satıcı olsa bile alıcıdır, o yüzden engel yok
+        Long kullaniciId = kullanici.getId();
 
-        favoriService.favoriyeEkle(kullanici.getId(), ilanId);
+        boolean favorideMi = favoriService.isFavori(kullaniciId, ilanId);
 
-        return "redirect:/ilan/" + ilanId;
+        if (favorideMi) {
+            favoriService.favoridenCikar(kullaniciId, ilanId);
+        } else {
+            favoriService.favoriyeEkle(kullaniciId, ilanId);
+        }
+        System.out.println("FAVORI CONTROLLER ÇALIŞTI");
+        return "redirect:/emlak/detay/" + ilanId;
     }
 }
