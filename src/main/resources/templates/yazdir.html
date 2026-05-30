@@ -1,0 +1,77 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Uygun Emlaklar - Yazdır</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h2 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        font-size: 14px;
+      }
+      th {
+        background: #f2f2f2;
+      }
+      img {
+        width: 120px;
+      }
+      .no-print {
+        margin-bottom: 20px;
+      }
+      @media print {
+        .no-print {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <button class="no-print" onclick="window.print()">Yazdır</button>
+
+    <h2>Uygun Emlaklar</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Başlık</th>
+          <th>Adres</th>
+          <th>Fiyat</th>
+          <th>Metrekare</th>
+          <th>Oda</th>
+          <th>Foto</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="e : ${liste}">
+          <td th:text="${e.baslik}"></td>
+          <td th:text="${e.adres}"></td>
+          <td th:text="${e.fiyat} + ' TL'"></td>
+          <td th:text="${e.metrekare}"></td>
+          <td th:text="${e.odaSayisi}"></td>
+          <td>
+            <img
+              th:if="${e.fotolar.size() > 0}"
+              th:src="${e.fotolar.get(0).url}"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

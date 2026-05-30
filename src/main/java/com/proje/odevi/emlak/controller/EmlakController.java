@@ -157,7 +157,7 @@ public class EmlakController {
         model.addAttribute("ilceler", ilceService.findAll());
         model.addAttribute("kategoriler", kategoriService.findAll());
 
-        return "emlak/tum-ilanlar";
+        return "tum-ilanlar";
     }
 
     @GetMapping("/ilceler")
@@ -165,4 +165,33 @@ public class EmlakController {
     public List<Ilce> ilceleriGetir(@RequestParam Long ilId) {
         return ilceService.findByIlId(ilId);
     }
+
+    @GetMapping("/yazdir")
+    public String yazdirSonuc(
+            @RequestParam(required = false) Long ilId,
+            @RequestParam(required = false) Long ilceId,
+            @RequestParam(required = false) Long kategoriId,
+            @RequestParam(required = false) Integer odaSayisi,
+            @RequestParam(required = false) Integer minMetrekare,
+            @RequestParam(required = false) Integer maxMetrekare,
+            @RequestParam(required = false) BigDecimal minFiyat,
+            @RequestParam(required = false) BigDecimal maxFiyat,
+            @RequestParam(required = false) Integer binaYasi,
+            @RequestParam(required = false) Integer kat,
+            @RequestParam(required = false) Integer esyali,
+            @RequestParam(required = false) String isitmaTipi,
+            Model model) {
+
+        List<Emlak> liste = service.ara(
+                ilId, ilceId, kategoriId,
+                odaSayisi,
+                minMetrekare, maxMetrekare,
+                minFiyat, maxFiyat,
+                binaYasi, kat, esyali,
+                isitmaTipi);
+
+        model.addAttribute("liste", liste);
+        return "yazdir";
+    }
+
 }

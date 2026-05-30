@@ -41,5 +41,197 @@
         </form>
       </div>
     </div>
+    <div class="container mt-5 position-relative">
+      <h2 class="mb-4">Öne Çıkan İlanlar</h2>
+
+      <!-- Sol Ok -->
+      <button class="slider-btn left" id="leftBtn">❮</button>
+
+      <!-- Slider Alanı -->
+      <div class="slider-container">
+        <div class="slider-track" id="emlakKartlari">
+          <!-- Kartlar JS ile gelecek -->
+        </div>
+      </div>
+
+      <!-- Sağ Ok -->
+      <button class="slider-btn right" id="rightBtn">❯</button>
+    </div>
+
+    <script>
+      fetch("/emlak")
+        .then((res) => res.text())
+        .then((html) => {
+          return fetch("/emlak/arama-sonuc-json");
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          let container = document.getElementById("emlakKartlari");
+          container.innerHTML = "";
+
+          data.forEach((e) => {
+            let img =
+              e.fotolar && e.fotolar.length > 0
+                ? e.fotolar[0]
+                : "/img/no-image.jpg";
+
+            let card = `
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="${img}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">${e.baslik}</h5>
+                            <p class="card-text text-muted">İl: ${e.il} • İlçe: ${e.ilce}</p>
+                            <p class="fw-bold text-primary fs-5">${e.fiyat} ₺</p>
+                            <a href="/emlak/detay/${e.id}" class="btn btn-outline-primary w-100">Detaya Git</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += card;
+          });
+        });
+    </script>
+    <script>
+      let position = 0;
+      const slideWidth = 320; // kart genişliği + gap
+      let autoSlide;
+
+      function startAutoSlide() {
+        autoSlide = setInterval(() => {
+          slideRight();
+        }, 3000);
+      }
+
+      function stopAutoSlide() {
+        clearInterval(autoSlide);
+      }
+
+      function slideRight() {
+        const track = document.getElementById("emlakKartlari");
+        const maxScroll = track.scrollWidth - track.clientWidth;
+
+        if (position < maxScroll) {
+          position += slideWidth;
+        } else {
+          position = 0; // başa sar
+        }
+
+        track.style.transform = `translateX(-${position}px)`;
+      }
+
+      function slideLeft() {
+        const track = document.getElementById("emlakKartlari");
+
+        if (position > 0) {
+          position -= slideWidth;
+        } else {
+          position = track.scrollWidth - track.clientWidth; // sona sar
+        }
+
+        track.style.transform = `translateX(-${position}px)`;
+      }
+
+      document.getElementById("rightBtn").onclick = () => {
+        stopAutoSlide();
+        slideRight();
+        startAutoSlide();
+      };
+
+      document.getElementById("leftBtn").onclick = () => {
+        stopAutoSlide();
+        slideLeft();
+        startAutoSlide();
+      };
+
+      // İlanları yükle
+      fetch("/emlak/arama-sonuc-json")
+        .then((res) => res.json())
+        .then((data) => {
+          let track = document.getElementById("emlakKartlari");
+          track.innerHTML = "";
+
+          data.forEach((e) => {
+            let img =
+              e.fotolar && e.fotolar.length > 0
+                ? "/uploads/" + e.fotolar[0]
+                : "/img/no-image.jpg";
+
+            let card = `
+                <div class="card shadow-sm">
+                    <img src="${img}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${e.baslik}</h5>
+                        <p class="card-text text-muted">İl: ${e.il} • İlçe: ${e.ilce}</p>
+                        <p class="fw-bold text-primary fs-5">${e.fiyat} ₺</p>
+                        <a href="/emlak/detay/${e.id}" class="btn btn-outline-primary w-100">Detaya Git</a>
+                    </div>
+                </div>
+            `;
+
+            track.innerHTML += card;
+          });
+
+          startAutoSlide();
+        });
+    </script>
+
+    <style>
+      .slider-container {
+        overflow: hidden;
+        width: 100%;
+      }
+
+      .slider-track {
+        display: flex;
+        gap: 10px;
+        transition: transform 0.4s ease;
+      }
+
+      .card {
+        min-width: 390px;
+        max-width: 390px;
+        flex-shrink: 0;
+        transition: 0.3s ease;
+      }
+
+      .card img {
+        height: 260px !important;
+        object-fit: cover;
+      }
+
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Ok butonları */
+      .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border: none;
+        font-size: 30px;
+        padding: 5px 12px;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+      }
+
+      .slider-btn.left {
+        left: -10px;
+      }
+
+      .slider-btn.right {
+        right: -10px;
+      }
+
+      .slider-btn:hover {
+        background: #f0f0f0;
+      }
+    </style>
   </body>
 </html>

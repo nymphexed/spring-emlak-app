@@ -59,7 +59,29 @@
 
     <div class="container mt-5">
       <h1 class="mb-4">Emlak Listesi</h1>
-
+      <div class="d-flex justify-content-end mb-3">
+        <a
+          id="yazdirBtn"
+          style="display: none"
+          th:href="@{/emlak/yazdir(
+        ilId=${ilId},
+        ilceId=${ilceId},
+        kategoriId=${kategoriId},
+        odaSayisi=${odaSayisi},
+        minMetrekare=${minMetrekare},
+        maxMetrekare=${maxMetrekare},
+        minFiyat=${minFiyat},
+        maxFiyat=${maxFiyat},
+        binaYasi=${binaYasi},
+        kat=${kat},
+        esyali=${esyali},
+        isitmaTipi=${isitmaTipi}
+   )}"
+          class="btn btn-outline-dark"
+        >
+          Yazıcı Çıktısı Al &#128438;
+        </a>
+      </div>
       <!-- Arama Kutusu -->
       <div class="d-flex justify-content-between align-items-center">
         <form class="input-group mb-4" method="get" th:action="@{/emlak}">
@@ -110,6 +132,7 @@
                   id="carousel-[[${e.id}]]"
                   class="carousel slide"
                   data-bs-ride="carousel"
+                  data-bs-interval="2500"
                 >
                   <div class="carousel-inner">
                     <div
@@ -130,24 +153,6 @@
                   </div>
 
                   <!-- Önceki -->
-                  <button
-                    class="carousel-control-prev"
-                    type="button"
-                    th:attr="data-bs-target='#carousel-' + ${e.id}"
-                    data-bs-slide="prev"
-                  >
-                    <span class="carousel-control-prev-icon"></span>
-                  </button>
-
-                  <!-- Sonraki -->
-                  <button
-                    class="carousel-control-next"
-                    type="button"
-                    th:attr="data-bs-target='#carousel-' + ${e.id}"
-                    data-bs-slide="next"
-                  >
-                    <span class="carousel-control-next-icon"></span>
-                  </button>
                 </div>
               </div>
 
@@ -255,7 +260,11 @@
           <label>Isıtma Tipi</label>
           <input type="text" name="isitmaTipi" class="form-control" />
 
-          <button type="submit" class="btn btn-primary mt-3">
+          <button
+            type="submit"
+            id="filtreUygulaBtn"
+            class="btn btn-primary mt-3"
+          >
             Filtreyi Uygula
           </button>
         </form>
@@ -317,20 +326,10 @@
             });
 
             fotoHtml = `
-                <div id="carousel-${e.id}" class="carousel slide" data-bs-ride="carousel">
+                <div id="carousel-${e.id}" class="carousel slide" data-bs-ride="carousel" >
                     <div class="carousel-inner">
                         ${items}
                     </div>
-
-                    <button class="carousel-control-prev" type="button"
-                            data-bs-target="#carousel-${e.id}" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-
-                    <button class="carousel-control-next" type="button"
-                            data-bs-target="#carousel-${e.id}" data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
                 </div>
             `;
           } else {
@@ -401,6 +400,14 @@
           popup.style.display = "flex";
         }
       });
+    </script>
+    <script>
+      document
+        .getElementById("filtreUygulaBtn")
+        .addEventListener("click", function () {
+          document.getElementById("yazdirBtn").style.display = "inline-block";
+          console.log("Filtre popup açıldı");
+        });
     </script>
   </body>
 </html>
