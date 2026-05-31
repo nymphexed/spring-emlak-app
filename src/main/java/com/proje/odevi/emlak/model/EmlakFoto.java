@@ -23,6 +23,8 @@ public class EmlakFoto {
     @JoinColumn(name = "emlak_id")
     private Emlak emlak;
 
+    // Getters and Setters
+
     public Long getId() {
         return id;
     }

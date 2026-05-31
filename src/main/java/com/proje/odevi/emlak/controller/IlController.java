@@ -19,13 +19,13 @@ public class IlController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("iller", ilService.findAll());
-        return "il/list"; // il/list.html
+        return "il/list";
     }
 
     @GetMapping("/ekle")
     public String ekleForm(Model model) {
         model.addAttribute("il", new Il());
-        return "il/ekle"; // il/ekle.html
+        return "il/ekle";
     }
 
     @PostMapping("/kaydet")

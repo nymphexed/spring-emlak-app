@@ -19,8 +19,7 @@ public class Kategori {
     @JsonIgnore
     private List<Emlak> emlaklar;
 
-
-    
+    // GETTER - SETTER
 
     public Long getId() {
         return id;
@@ -38,5 +37,4 @@ public class Kategori {
         this.ad = ad;
     }
 
-    
 }

@@ -35,7 +35,7 @@ public class ProfilController {
     @GetMapping
     public String profil(Model model, Principal principal) {
 
-        // ✔ Giriş yapmayan kullanıcı → login sayfasına
+        // Giriş yapmayan kullanıcı → login sayfasına
         if (principal == null) {
             return "redirect:/login";
         }
@@ -67,7 +67,7 @@ public class ProfilController {
         Kullanici k = kullaniciRepository.findByEmail(principal.getName())
                 .orElseThrow();
 
-        // ✔ Yeni işletme oluştur
+        // Yeni işletme oluştur
         EmlakIsletmesi isletme = new EmlakIsletmesi();
         isletme.setIsletmeAdi(isletmeAdi);
         isletme.setYetkili(yetkili);
@@ -78,7 +78,7 @@ public class ProfilController {
 
         isletmeRepository.save(isletme);
 
-        // ✔ Kullanıcı artık satıcıdır
+        // Kullanıcı artık satıcıdır
         k.setSeller(true);
         k.setIsletme(isletme);
         kullaniciRepository.save(k);
@@ -98,7 +98,7 @@ public class ProfilController {
 
         if (k.getIsletme() != null) {
 
-            // ✔ İşletmeyi sil
+            // İşletmeyi sil
             isletmeRepository.delete(k.getIsletme());
 
             k.setIsletme(null);

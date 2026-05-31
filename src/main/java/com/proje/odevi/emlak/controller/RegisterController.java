@@ -29,11 +29,8 @@ public class RegisterController {
     @PostMapping("/register")
     public String processRegister(@ModelAttribute Kullanici kullanici) {
 
-        // Şifre encode edilmeli
+        // Şifre encode
         kullanici.setSifre(passwordEncoder.encode(kullanici.getSifre()));
-
-        // Rol formdan geliyor → direkt kaydediyoruz
-        // kullanici.getRol() zaten formdan gelen değer
 
         kullaniciRepository.save(kullanici);
 

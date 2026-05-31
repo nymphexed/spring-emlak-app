@@ -1,6 +1,5 @@
 package com.proje.odevi.emlak.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -19,6 +18,7 @@ public class Ilce {
     @JoinColumn(name = "IL_ID")
     private Il il;
 
+    // Getter – Setter
     public Long getId() {
         return id;
     }
@@ -43,5 +43,4 @@ public class Ilce {
         this.il = il;
     }
 
-    // Getter – Setter
 }

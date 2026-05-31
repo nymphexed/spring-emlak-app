@@ -18,7 +18,6 @@ public class Favori {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favori_seq")
     private Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "kullanici_id")
     private Kullanici kullanici;
@@ -27,6 +26,7 @@ public class Favori {
     @JoinColumn(name = "emlak_id")
     private Emlak emlak;
 
+    // GETTER - SETTER
     public Long getId() {
         return id;
     }
@@ -51,5 +51,4 @@ public class Favori {
         this.emlak = emlak;
     }
 
-    // GETTER - SETTER
 }

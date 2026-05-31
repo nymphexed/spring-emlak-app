@@ -21,7 +21,7 @@ public class EmlakIsletmesi {
 
     @Column(name = "ISLETME_ADI")
     private String isletmeAdi;
-    
+
     private String yetkili;
     private String adres;
     private String telefon;
@@ -30,6 +30,8 @@ public class EmlakIsletmesi {
     @OneToOne
     @JoinColumn(name = "kullanici_id")
     private Kullanici kullanici;
+
+    // getter – setter
 
     public Long getId() {
         return id;
@@ -86,8 +88,6 @@ public class EmlakIsletmesi {
     public void setKullanici(Kullanici kullanici) {
         this.kullanici = kullanici;
     }
-
-    // getter – setter
 
     public EmlakIsletmesi() {
     }
