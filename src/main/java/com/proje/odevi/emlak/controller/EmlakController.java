@@ -80,7 +80,8 @@ public class EmlakController {
     public String detay(@PathVariable Long id, Model model, Principal principal) {
 
         Emlak emlak = service.getir(id);
-        model.addAttribute("emlak", emlak);
+        EmlakDTO dto = EmlakMapper.toDTO(emlak);
+        model.addAttribute("emlak", dto);
 
         boolean favorideMi = false;
 

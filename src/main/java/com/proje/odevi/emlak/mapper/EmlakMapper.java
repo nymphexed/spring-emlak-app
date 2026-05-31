@@ -3,6 +3,7 @@ package com.proje.odevi.emlak.mapper;
 import java.util.stream.Collectors;
 
 import com.proje.odevi.emlak.dto.EmlakDTO;
+//import com.proje.odevi.emlak.dto.KullaniciDTO;
 import com.proje.odevi.emlak.model.Emlak;
 
 public class EmlakMapper {
@@ -10,6 +11,8 @@ public class EmlakMapper {
     public static EmlakDTO toDTO(Emlak e) {
 
         EmlakDTO dto = new EmlakDTO();
+
+        // KullaniciDTO k = new KullaniciDTO();
 
         dto.id = e.getId();
         dto.baslik = e.getBaslik();
@@ -30,6 +33,15 @@ public class EmlakMapper {
                 .stream()
                 .map(f -> f.getUrl()) // EmlakFoto içinde getUrl() olduğunu varsayıyorum
                 .collect(Collectors.toList());
+
+        String adSoyad = e.getKullanici().getAd() + " " + e.getKullanici().getSoyad();
+
+        String isletme = "";
+        if (e.getKullanici().getIsletme() != null) {
+            isletme = " – " + e.getKullanici().getIsletme().getIsletmeAdi();
+        }
+
+        dto.kullaniciBilgisi = adSoyad + isletme;
 
         return dto;
     }

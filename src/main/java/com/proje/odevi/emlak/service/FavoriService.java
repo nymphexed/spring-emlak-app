@@ -1,6 +1,7 @@
 package com.proje.odevi.emlak.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,16 +11,18 @@ import com.proje.odevi.emlak.model.Favori;
 import com.proje.odevi.emlak.model.Kullanici;
 import com.proje.odevi.emlak.repository.FavoriRepository;
 
-
 @Service
 public class FavoriService {
 
     @Autowired
     private FavoriRepository favoriRepository;
-  
 
     public boolean isFavori(Long kullaniciId, Long ilanId) {
         return favoriRepository.existsByKullanici_IdAndEmlak_Id(kullaniciId, ilanId);
+    }
+
+    public List<Favori> kullaniciFavorileri(Long kullaniciId) {
+        return favoriRepository.findByKullanici_Id(kullaniciId);
     }
 
     public void favoriyeEkle(Long kullaniciId, Long ilanId) {

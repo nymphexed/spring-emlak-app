@@ -23,47 +23,54 @@
             th:name="${_csrf.parameterName}"
             th:value="${_csrf.token}"
           />
-          <button class="btn btn-warning mt-2 mb-4">
+          <button class="btn btn-warning mt-2">
             Satıcı Ol – İlan Ver, Kazan
           </button>
         </form>
       </div>
-      <h2>Profil Bilgileri</h2>
+      <a th:href="@{/favori/liste}" class="btn btn-outline-primary mt-2"
+        >Favorilerim</a
+      >
+      <div sec:authorize="hasRole('SATICI')">
+        <a th:href="@{/satici/ilanlarim}" class="btn btn-outline-primary mt-2">
+          İlanlarıma git
+        </a>
+      </div>
+      <div style="margin-top: 20px">
+        <h2>Profil Bilgileri</h2>
 
-      <ul class="list-group mb-4">
-        <li class="list-group-item">
-          <strong>Rol:</strong>
-          <span th:text="${kullanici.isSeller ? 'Satıcı' : 'Kullanıcı'}"></span>
-        </li>
-        <li class="list-group-item">
-          <strong>Ad:</strong> <span th:text="${kullanici.ad}"></span>
-        </li>
-        <li class="list-group-item">
-          <strong>Soyad:</strong> <span th:text="${kullanici.soyad}"></span>
-        </li>
-        <li class="list-group-item">
-          <strong>Email:</strong> <span th:text="${kullanici.email}"></span>
-        </li>
-      </ul>
+        <ul class="list-group mb-4">
+          <li class="list-group-item">
+            <strong>Rol:</strong>
+            <span
+              th:text="${kullanici.isSeller ? 'Satıcı' : 'Kullanıcı'}"
+            ></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Ad:</strong> <span th:text="${kullanici.ad}"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Soyad:</strong> <span th:text="${kullanici.soyad}"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Email:</strong> <span th:text="${kullanici.email}"></span>
+          </li>
+        </ul>
+      </div>
+      <div th:if="${kullanici.isSeller}">
+        <form action="/profil/satici-kaldir" method="post">
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button class="btn btn-danger">Satıcı Profilini Kaldır</button>
+        </form>
+      </div>
 
       <hr />
 
       <div class="d-flex flex-column gap-2">
-        <div sec:authorize="hasRole('SATICI')">
-          <a href="/satici/ilanlarim" class="btn btn-primary">
-            İlanlarıma git
-          </a>
-        </div>
-        <div th:if="${kullanici.isSeller}">
-          <form action="/profil/satici-kaldir" method="post">
-            <input
-              type="hidden"
-              th:name="${_csrf.parameterName}"
-              th:value="${_csrf.token}"
-            />
-            <button class="btn btn-danger">Satıcı Profilini Kaldır</button>
-          </form>
-        </div>
         <!-- Eğer işletme varsa göster -->
         <div th:if="${kullanici.isSeller and kullanici.isletme != null}">
           <h3>Emlak İşletmesi</h3>
@@ -155,11 +162,12 @@
       </div>
     </div>
     <script>
-      document
-        .getElementById("isletmeEkleBtn")
-        .addEventListener("click", function () {
+      const isletmeBtn = document.getElementById("isletmeEkleBtn");
+      if (isletmeBtn) {
+        isletmeBtn.addEventListener("click", function () {
           document.getElementById("isletmeForm").style.display = "block";
         });
+      }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script th:if="${confetti}">
@@ -172,6 +180,11 @@
     <style>
       .d-flex.flex-column.gap-2 button,
       .d-flex.flex-column.gap-2 a {
+        min-width: 100px;
+        width: 15%;
+      }
+      .btn.btn-outline-primary {
+        padding: 5px 10px;
         min-width: 100px;
         width: 15%;
       }

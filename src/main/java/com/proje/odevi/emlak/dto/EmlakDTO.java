@@ -21,4 +21,6 @@ public class EmlakDTO {
     public String ilce;
 
     public List<String> fotolar;
+
+    public String kullaniciBilgisi;
 }

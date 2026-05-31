@@ -73,7 +73,7 @@
             let img =
               e.fotolar && e.fotolar.length > 0
                 ? e.fotolar[0]
-                : "/img/no-image.jpg";
+                : "/img/no-image.png";
 
             let card = `
                 <div class="col-md-4 mb-4">
@@ -155,8 +155,8 @@
           data.forEach((e) => {
             let img =
               e.fotolar && e.fotolar.length > 0
-                ? "/uploads/" + e.fotolar[0]
-                : "/img/no-image.jpg";
+                ? e.fotolar[0]
+                : "/img/no-image.png";
 
             let card = `
                 <div class="card shadow-sm">

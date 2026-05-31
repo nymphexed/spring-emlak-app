@@ -1,5 +1,6 @@
 package com.proje.odevi.emlak.repository;
 
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,5 +20,7 @@ public interface FavoriRepository extends JpaRepository<Favori, Long> {
     @Modifying
     @Query("delete from Favori f where f.kullanici.id = :kullaniciId and f.emlak.id = :ilanId")
     void deleteByKullanici_IdAndEmlak_Id(@Param("kullaniciId") Long kullaniciId, @Param("ilanId") Long emlakId);
+
+    List<Favori> findByKullanici_Id(Long kullaniciId);
 
 }
