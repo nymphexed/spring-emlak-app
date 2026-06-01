@@ -64,18 +64,18 @@
           id="yazdirBtn"
           style="display: none"
           th:href="@{/emlak/yazdir(
-        ilId=${ilId},
-        ilceId=${ilceId},
-        kategoriId=${kategoriId},
-        odaSayisi=${odaSayisi},
-        minMetrekare=${minMetrekare},
-        maxMetrekare=${maxMetrekare},
-        minFiyat=${minFiyat},
-        maxFiyat=${maxFiyat},
-        binaYasi=${binaYasi},
-        kat=${kat},
-        esyali=${esyali},
-        isitmaTipi=${isitmaTipi}
+        ilId=${param.ilId},
+        ilceId=${param.ilceId},
+        kategoriId=${param.kategoriId},
+        odaSayisi=${param.odaSayisi},
+        minMetrekare=${param.minMetrekare},
+        maxMetrekare=${param.maxMetrekare},
+        minFiyat=${param.minFiyat},
+        maxFiyat=${param.maxFiyat},
+        binaYasi=${param.binaYasi},
+        kat=${param.kat},
+        esyali=${param.esyali},
+        isitmaTipi=${param.isitmaTipi}
    )}"
           class="btn btn-outline-dark"
         >
@@ -287,6 +287,7 @@
         const form = document.getElementById("filtreForm");
         const popup = document.getElementById("filtrePopup");
         const btn = document.getElementById("filtreleBtn");
+        const yazdirBtn = document.getElementById("yazdirBtn");
 
         // Popup aç/kapa
         btn.onclick = () => (popup.style.display = "flex");
@@ -302,7 +303,9 @@
             .then((res) => res.json())
             .then((data) => {
               tabloyuGuncelle(data);
-              popup.style.display = "none"; // İstersen kapat
+              popup.style.display = "none";
+              yazdirBtn.href = "/emlak/yazdir?" + params;
+              yazdirBtn.style.display = "inline-block"; // İstersen kapat
             })
             .catch((err) => console.error("Hata:", err));
         });

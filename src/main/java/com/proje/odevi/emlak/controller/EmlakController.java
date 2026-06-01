@@ -51,6 +51,18 @@ public class EmlakController {
 
     @GetMapping
     public String liste(Model model,
+            @RequestParam(required = false) Long ilId,
+            @RequestParam(required = false) Long ilceId,
+            @RequestParam(required = false) Long kategoriId,
+            @RequestParam(required = false) Integer odaSayisi,
+            @RequestParam(required = false) Integer minMetrekare,
+            @RequestParam(required = false) Integer maxMetrekare,
+            @RequestParam(required = false) BigDecimal minFiyat,
+            @RequestParam(required = false) BigDecimal maxFiyat,
+            @RequestParam(required = false) Integer binaYasi,
+            @RequestParam(required = false) Integer kat,
+            @RequestParam(required = false) Integer esyali,
+            @RequestParam(required = false) String isitmaTipi,
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String filtre, Principal principal) {
 
