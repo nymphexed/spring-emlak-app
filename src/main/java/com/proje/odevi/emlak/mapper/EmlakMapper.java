@@ -40,7 +40,7 @@ public class EmlakMapper {
         if (e.getKullanici().getIsletme() != null) {
             isletme = " – " + e.getKullanici().getIsletme().getIsletmeAdi();
         }
-
+        dto.kullaniciId = e.getKullanici().getId();
         dto.kullaniciBilgisi = adSoyad + isletme;
 
         return dto;

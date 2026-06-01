@@ -25,7 +25,9 @@
         <div class="col-md-4 mb-4" th:each="e : ${liste}">
           <div class="card shadow-sm h-100">
             <img
-              th:src="${e.fotolar[0]}"
+              th:src="${e.fotolar != null and !e.fotolar.isEmpty() 
+                ? e.fotolar.get(0) 
+                : '/img/no-image.png'}"
               class="card-img-top"
               style="height: 220px; object-fit: cover"
             />

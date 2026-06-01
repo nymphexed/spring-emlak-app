@@ -22,5 +22,11 @@ public class EmlakDTO {
 
     public List<String> fotolar;
 
+    public Long kullaniciId;
+
     public String kullaniciBilgisi;
+
+    public Long getKullaniciId() {
+        return kullaniciId;
+    }
 }

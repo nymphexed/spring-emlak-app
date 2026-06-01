@@ -52,7 +52,7 @@ public class EmlakController {
     @GetMapping
     public String liste(Model model,
             @RequestParam(required = false) String q,
-            @RequestParam(required = false) String filtre) {
+            @RequestParam(required = false) String filtre, Principal principal) {
 
         List<EmlakDTO> liste;
 
@@ -68,6 +68,8 @@ public class EmlakController {
                     .toList();
         }
 
+        liste = filtreleDTO(principal, liste);
+
         model.addAttribute("liste", liste);
         model.addAttribute("iller", ilService.listele());
         model.addAttribute("kategoriler", kategoriService.findAll());
@@ -80,6 +82,7 @@ public class EmlakController {
     public String detay(@PathVariable Long id, Model model, Principal principal) {
 
         Emlak emlak = service.getir(id);
+
         EmlakDTO dto = EmlakMapper.toDTO(emlak);
         model.addAttribute("emlak", dto);
 
@@ -145,13 +148,15 @@ public class EmlakController {
             @RequestParam(required = false) Integer kat,
             @RequestParam(required = false) Integer esyali,
             @RequestParam(required = false) String isitmaTipi,
-            Model model) {
+            Model model, Principal principal) {
 
         List<Emlak> sonuc = service.ara(
                 ilId, ilceId, kategoriId, odaSayisi,
                 minMetrekare, maxMetrekare,
                 minFiyat, maxFiyat,
                 binaYasi, kat, esyali, isitmaTipi);
+
+        sonuc = filtreleEntity(principal, sonuc);
 
         model.addAttribute("liste", sonuc);
         model.addAttribute("iller", ilService.findAll());
@@ -181,7 +186,7 @@ public class EmlakController {
             @RequestParam(required = false) Integer kat,
             @RequestParam(required = false) Integer esyali,
             @RequestParam(required = false) String isitmaTipi,
-            Model model) {
+            Model model, Principal principal) {
 
         List<Emlak> liste = service.ara(
                 ilId, ilceId, kategoriId,
@@ -191,8 +196,40 @@ public class EmlakController {
                 binaYasi, kat, esyali,
                 isitmaTipi);
 
+        liste = filtreleEntity(principal, liste);
+
         model.addAttribute("liste", liste);
         return "yazdir";
+    }
+
+    // EmlakDTO listesi için filtre
+    private List<EmlakDTO> filtreleDTO(Principal principal, List<EmlakDTO> liste) {
+        if (principal == null)
+            return liste;
+
+        var k = kullaniciService.findByEmail(principal.getName());
+
+        if (k.isSeller())
+            return liste;
+
+        return liste.stream()
+                .filter(e -> !e.getKullaniciId().equals(k.getId()))
+                .toList();
+    }
+
+    // Emlak entity listesi için filtre
+    private List<Emlak> filtreleEntity(Principal principal, List<Emlak> liste) {
+        if (principal == null)
+            return liste;
+
+        var k = kullaniciService.findByEmail(principal.getName());
+
+        if (k.isSeller())
+            return liste;
+
+        return liste.stream()
+                .filter(e -> !e.getKullanici().getId().equals(k.getId()))
+                .toList();
     }
 
 }
